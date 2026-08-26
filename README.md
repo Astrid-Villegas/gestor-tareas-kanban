@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Gestor de Tareas Kanban 📋
 
-## Getting Started
+Tablero Kanban tipo Trello con **arrastrar y soltar (drag & drop)**, múltiples tableros y modo oscuro. Proyecto de portafolio construido con Next.js, TypeScript y `dnd-kit`.
 
-First, run the development server:
+> Aplicación 100% del lado del cliente: no necesita backend ni base de datos, todos los datos se guardan en el `localStorage` del navegador.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## ✨ Características
+
+- **Múltiples tableros**: barra lateral para crear tableros nuevos y cambiar entre ellos.
+- **Columnas personalizables**: añade, renombra (clic sobre el título) y elimina columnas. Por defecto: "Por hacer", "En progreso" y "Hecho".
+- **Tarjetas de tareas** con título, descripción opcional, prioridad (baja/media/alta, con etiqueta de color verde/amarillo/rojo) y fecha límite opcional (con aviso visual si está vencida).
+- **Arrastrar y soltar** con [`@dnd-kit`](https://dndkit.com/): reordena tarjetas dentro de una columna o muévelas entre columnas, con retroalimentación visual (la tarjeta se eleva con sombra, la columna destino se resalta).
+- **Persistencia automática** en `localStorage`: tableros, columnas y tarjetas se guardan al instante y se recuperan al recargar la página.
+- **Modo claro / oscuro** con detector de preferencia del sistema y botón para alternar manualmente.
+- **Datos de ejemplo**: la primera vez que se abre la app se genera un tablero de muestra con columnas y tarjetas, para no partir de una pantalla vacía.
+- **Diseño responsive** pensado para escritorio y móvil, con barra lateral colapsable.
+
+## 🛠️ Tecnologías
+
+- [Next.js 14+](https://nextjs.org/) (App Router) + [React](https://react.dev/)
+- [TypeScript](https://www.typescriptlang.org/) en modo estricto
+- [Tailwind CSS](https://tailwindcss.com/) para los estilos
+- [`@dnd-kit/core`](https://www.npmjs.com/package/@dnd-kit/core), [`@dnd-kit/sortable`](https://www.npmjs.com/package/@dnd-kit/sortable) y [`@dnd-kit/utilities`](https://www.npmjs.com/package/@dnd-kit/utilities) para el drag & drop
+- `localStorage` del navegador como única capa de persistencia (sin backend)
+
+## 📁 Estructura del proyecto
+
+```
+gestor-tareas-kanban/
+├── src/
+│   ├── app/
+│   │   ├── layout.tsx          # layout raíz, providers y script anti-parpadeo del tema
+│   │   ├── page.tsx            # ensambla sidebar + header + tablero activo
+│   │   └── globals.css         # Tailwind, variante de modo oscuro y scrollbars
+│   ├── components/
+│   │   ├── Sidebar.tsx         # listado de tableros, crear/eliminar tablero
+│   │   ├── Header.tsx          # nombre del tablero, contador y toggle de tema
+│   │   ├── KanbanBoard.tsx     # DndContext: lógica de arrastre entre columnas
+│   │   ├── Column.tsx          # columna droppable, renombrar/eliminar, añadir tarjeta
+│   │   ├── TaskCard.tsx        # tarjeta arrastrable (sortable) con prioridad y fecha
+│   │   ├── TaskModal.tsx       # formulario modal para crear/editar una tarjeta
+│   │   ├── PriorityTag.tsx     # etiqueta de color según prioridad
+│   │   ├── ConfirmDialog.tsx   # modal de confirmación para borrados
+│   │   └── ThemeToggle.tsx     # botón de modo claro/oscuro
+│   ├── context/
+│   │   ├── KanbanContext.tsx   # estado global (reducer) + persistencia en localStorage
+│   │   └── ThemeContext.tsx    # estado del tema (claro/oscuro)
+│   ├── lib/
+│   │   ├── storage.ts          # helpers de lectura/escritura de localStorage
+│   │   ├── seed.ts             # datos de ejemplo para el primer uso
+│   │   └── id.ts                # generador de identificadores únicos
+│   └── types/
+│       └── index.ts            # tipos: Board, Column, Task, Priority
+└── public/
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Instalación y uso
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Requisitos
+- Node.js 18+
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Pasos
 
-## Learn More
+```bash
+npm install
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Abre [http://localhost:3000](http://localhost:3000) en el navegador. No se necesita configurar ninguna variable de entorno ni base de datos: la app funciona por completo en el cliente.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Para generar una build de producción:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run build
+npm start
+```
 
-## Deploy on Vercel
+## 📄 Licencia
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Proyecto con fines educativos y de portafolio.
