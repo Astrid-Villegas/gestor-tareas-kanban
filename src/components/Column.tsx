@@ -6,9 +6,11 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import { Inbox } from "lucide-react";
 import type { Column as ColumnType, Task } from "@/types";
 import { TaskCard } from "./TaskCard";
 import { ConfirmDialog } from "./ConfirmDialog";
+import { getIdColor } from "@/lib/colorHash";
 
 interface ColumnProps {
   column: ColumnType;
@@ -44,6 +46,7 @@ export function Column({
 
   const taskIds = useMemo(() => column.tasks.map((task) => task.id), [column.tasks]);
   const isDone = looksDone(column.title);
+  const color = useMemo(() => getIdColor(column.id), [column.id]);
 
   function commitRename() {
     const trimmed = title.trim();
@@ -56,7 +59,9 @@ export function Column({
   }
 
   return (
-    <div className="flex h-full w-72 shrink-0 flex-col rounded-2xl bg-slate-100/70 dark:bg-slate-900/40">
+    <div
+      className={`flex max-h-full w-72 shrink-0 flex-col rounded-2xl border-t-4 bg-slate-100/70 shadow-sm dark:bg-slate-900/40 ${color.border}`}
+    >
       <div className="flex items-center justify-between gap-2 px-3 pt-3">
         {isEditing ? (
           <input
@@ -81,10 +86,11 @@ export function Column({
           <button
             type="button"
             onClick={() => setIsEditing(true)}
-            className="truncate rounded-lg px-1 py-1 text-left text-sm font-semibold text-slate-700 hover:bg-slate-200/60 dark:text-slate-200 dark:hover:bg-slate-700/60"
+            className="flex min-w-0 items-center gap-2 truncate rounded-lg px-1 py-1 text-left text-sm font-semibold text-slate-700 hover:bg-slate-200/60 dark:text-slate-200 dark:hover:bg-slate-700/60"
             title="Haz clic para renombrar"
           >
-            {column.title}
+            <span aria-hidden className={`h-2 w-2 shrink-0 rounded-full ${color.dot}`} />
+            <span className="truncate">{column.title}</span>
           </button>
         )}
 
@@ -132,8 +138,12 @@ export function Column({
           ))}
         </SortableContext>
         {column.tasks.length === 0 && (
-          <div className="flex flex-1 items-center justify-center rounded-lg border-2 border-dashed border-slate-300 py-6 text-xs text-slate-400 dark:border-slate-700 dark:text-slate-500">
-            Suelta una tarjeta aquí
+          <div className="flex flex-1 flex-col items-center justify-center gap-1.5 rounded-lg border-2 border-dashed border-slate-300 py-8 text-slate-400 dark:border-slate-700 dark:text-slate-500">
+            <Inbox className="h-6 w-6" strokeWidth={1.5} />
+            <span className="text-xs font-medium">Sin tareas</span>
+            <span className="text-[11px] text-slate-400/80 dark:text-slate-600">
+              Suelta una tarjeta aquí
+            </span>
           </div>
         )}
       </div>

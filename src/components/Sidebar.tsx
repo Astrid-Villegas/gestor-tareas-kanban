@@ -3,6 +3,11 @@
 import { useState } from "react";
 import { useKanban } from "@/context/KanbanContext";
 import { ConfirmDialog } from "./ConfirmDialog";
+import { getIdColor } from "@/lib/colorHash";
+
+function countTasks(board: { columns: { tasks: unknown[] }[] }): number {
+  return board.columns.reduce((total, column) => total + column.tasks.length, 0);
+}
 
 interface SidebarProps {
   open: boolean;
@@ -39,8 +44,8 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="mb-4 flex items-center gap-2 px-1">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white">
+        <div className="mb-4 flex items-center gap-3 rounded-xl bg-gradient-to-br from-indigo-600 via-indigo-500 to-violet-600 px-3 py-3 text-white shadow-md shadow-indigo-600/20 dark:shadow-black/30">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/15 backdrop-blur-sm">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -50,9 +55,12 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               <path d="M3 3.75A.75.75 0 013.75 3h6.5a.75.75 0 01.75.75v16.5a.75.75 0 01-.75.75h-6.5a.75.75 0 01-.75-.75V3.75zM13.5 3.75a.75.75 0 01.75-.75h6a.75.75 0 01.75.75v10.5a.75.75 0 01-.75.75h-6a.75.75 0 01-.75-.75V3.75zM13.5 17.25a.75.75 0 01.75-.75h6a.75.75 0 01.75.75v3a.75.75 0 01-.75.75h-6a.75.75 0 01-.75-.75v-3z" />
             </svg>
           </div>
-          <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-            Gestor Kanban
-          </span>
+          <div className="min-w-0">
+            <span className="block truncate text-sm font-semibold">Gestor Kanban</span>
+            <span className="block truncate text-[11px] text-indigo-100/85">
+              {state.boards.length} tablero{state.boards.length === 1 ? "" : "s"}
+            </span>
+          </div>
         </div>
 
         <div className="mb-2 flex items-center justify-between px-1">
@@ -64,21 +72,38 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         <nav className="flex-1 space-y-1 overflow-y-auto">
           {state.boards.map((board) => {
             const isActive = board.id === state.activeBoardId;
+            const color = getIdColor(board.id);
+            const taskCount = countTasks(board);
             return (
-              <div key={board.id} className="group relative">
+              <div
+                key={board.id}
+                className={`group relative rounded-lg ${
+                  isActive ? "bg-indigo-50 dark:bg-indigo-500/15" : ""
+                }`}
+              >
                 <button
                   type="button"
                   onClick={() => {
                     setActiveBoard(board.id);
                     onClose();
                   }}
-                  className={`w-full truncate rounded-lg px-3 py-2 pr-8 text-left text-sm font-medium transition-colors ${
+                  className={`flex w-full min-w-0 items-center gap-2 rounded-lg border-l-[3px] py-2 pl-2 pr-8 text-left text-sm font-medium transition-colors ${
                     isActive
-                      ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300"
-                      : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                      ? "border-indigo-500 text-indigo-700 dark:border-indigo-400 dark:text-indigo-300"
+                      : "border-transparent text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                   }`}
                 >
-                  {board.name}
+                  <span aria-hidden className={`h-2 w-2 shrink-0 rounded-full ${color.dot}`} />
+                  <span className="min-w-0 flex-1 truncate">{board.name}</span>
+                  <span
+                    className={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-semibold tabular-nums ${
+                      isActive
+                        ? "bg-indigo-100 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-300"
+                        : "bg-slate-200/70 text-slate-500 dark:bg-slate-700/70 dark:text-slate-400"
+                    }`}
+                  >
+                    {taskCount}
+                  </span>
                 </button>
                 {state.boards.length > 1 && (
                   <button

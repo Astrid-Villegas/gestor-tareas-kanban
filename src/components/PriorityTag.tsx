@@ -14,6 +14,15 @@ const LABELS: Record<Priority, string> = {
   alta: "Alta",
 };
 
+// Color de acento por prioridad, reutilizado en TaskCard para el borde
+// izquierdo de la tarjeta, de forma que la prioridad se pueda distinguir
+// de un vistazo sin necesidad de leer la etiqueta de texto.
+export const PRIORITY_ACCENT: Record<Priority, string> = {
+  baja: "bg-emerald-500 dark:bg-emerald-400",
+  media: "bg-amber-500 dark:bg-amber-400",
+  alta: "bg-rose-500 dark:bg-rose-400",
+};
+
 export function PriorityTag({ priority }: { priority: Priority }) {
   return (
     <span

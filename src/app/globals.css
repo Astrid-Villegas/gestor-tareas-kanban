@@ -45,3 +45,19 @@ body {
 .dark ::-webkit-scrollbar-thumb {
   background-color: rgba(100, 116, 139, 0.5);
 }
+
+/* Lienzo del tablero: un patrón de puntos muy sutil en vez de un fondo
+   plano, para que las columnas no floten sobre un vacío gris uniforme. */
+.board-canvas {
+  background-image: radial-gradient(circle, rgba(100, 116, 139, 0.22) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(99, 102, 241, 0.05), transparent 40%);
+  background-size: 18px 18px, 100% 100%;
+  background-position: -9px -9px, 0 0;
+}
+
+.dark .board-canvas {
+  background-image: radial-gradient(circle, rgba(148, 163, 184, 0.16) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(99, 102, 241, 0.08), transparent 40%);
+  background-size: 18px 18px, 100% 100%;
+  background-position: -9px -9px, 0 0;
+}
